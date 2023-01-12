@@ -1,0 +1,874 @@
+<app-layout>
+  <div id="credit-page">
+    
+    <div class="backdiv">
+      <button
+        mat-mini-fab
+        (click)="onClickBack()"
+        class="back"
+        aria-label="back button"
+      >
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <h2>Company KYC</h2>
+    </div>
+
+    <div class="main-wrapper">
+      <mat-accordion class="example-headers-align">
+        <div class="div-indicator">
+          <mat-card>
+            <section>
+              <mat-icon style="color: green;">check_circle</mat-icon>
+              <label> : Verified | </label>
+              <mat-icon style="color: orange;">watch_later</mat-icon>
+              <label> : Processing | </label>
+              <mat-icon style="color: red;">remove_circle</mat-icon>
+              <label> : Not Verified </label>
+            </section>
+          </mat-card>
+        </div>
+
+      <form [formGroup]="kycForm">
+        <mat-accordion>
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title> PAN Details* (Individual) </mat-panel-title>
+              <mat-panel-description>
+                <mat-icon *ngIf="data && panDetailsLink" style="color: green;">check_circle</mat-icon>
+                <mat-icon *ngIf="!data && !panDetailsLink" style="color: red;">remove_circle</mat-icon>
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+            <div
+              style="
+                width: 95%;
+                align-self: center;
+                justify-content: space-around;
+                font-size: 10px;
+              "
+              formGroupName="panDetails"
+            >
+              <div
+                style="
+                  display: flex;
+                  justify-content: space-around;
+                  flex-direction: row;
+                "
+              >
+                <mat-form-field class="mat-form-field" appearance="outline">
+                  <mat-label>PAN Number</mat-label>
+                  <input
+                    matInput
+                    formControlName="panNumber"
+                    type="text"
+                    pattern="^[A-Z]{5}[0-9]{4}[A-Z]$"
+                    required
+                  />
+                  <mat-error style="color: rgb(241, 14, 14); margin-top: 7px"
+                    >Please enter the valid PAN number
+                  </mat-error>
+                </mat-form-field>
+
+                <input
+                  id="panInput"
+                  formControlName="documentList"
+                  type="file"
+                  class="file-input"
+                  (change)="changeEvent($event)"
+                  #panfileUpload
+                  multiple
+                />
+                <div class="upload-component">
+                  <p
+                    class="upload-button-placeholder"
+                    *ngIf="this.panUrl.length == 0; else panTag"
+                  >
+                    Upload Related Documents
+                  </p>
+                  <ng-template #panTag>
+                    <div *ngFor="let item of panUrl">
+                      <p>{{ item.name }}</p>
+                    </div>
+                  </ng-template>
+                  <button
+                    mat-mini-fab
+                    color="primary"
+                    class="upload-btn"
+                    (click)="panfileUpload.click()"
+                  >
+                    <mat-icon>backup</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <h3 *ngIf="panDetailsLink">
+              Show All
+              <a [href]="panDetailsLink"> Pan Details</a>
+            </h3>
+          </mat-expansion-panel>
+
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title
+                >Address Proof* (Any one of the following)
+              </mat-panel-title>
+              <mat-panel-description>
+                <mat-icon *ngIf="data && addressProofLink" style="color: green;">check_circle</mat-icon>
+                <mat-icon *ngIf="!data && !addressProofLink" style="color: red;">remove_circle</mat-icon>
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+            <div
+              style="
+                width: 95%;
+                align-self: center;
+                justify-content: space-between;
+                font-size: 10px;
+              "
+              formGroupName="AddressProof"
+            >
+              <div
+                style="
+                  display: flex;
+                  justify-content: space-around;
+                  flex-direction: row;
+                "
+              >
+                <mat-form-field class="mat-form-field" appearance="outline">
+                  <mat-label>Document Type</mat-label>
+                  <mat-select formControlName="addressDocType">
+                    <mat-option value="aadhar">Aadhaar Card</mat-option>
+                    <mat-option value="electricbill"
+                      >Electricity Bill</mat-option
+                    >
+                    <mat-option value="voterid">Voter Card</mat-option>
+                    <mat-option value="passport">Passport</mat-option>
+                    <mat-option value="drivinglicense"
+                      >Driving License</mat-option
+                    >
+                  </mat-select>
+                  <mat-error style="color: rgb(241, 14, 14); margin-top: 7px">Please select document type</mat-error>
+
+                </mat-form-field>
+                <mat-form-field class="mat-form-field" appearance="outline">
+                  <mat-label>Document Number</mat-label>
+                  <input
+                    matInput
+                    formControlName="addressDocNumber"
+                    type="text"
+                    pattern="^[a-zA-Z0-9_.-]*$"
+                    required
+                  />
+                  <mat-error style="color: rgb(241, 14, 14); margin-top: 7px"
+                    >Please enter document number
+                  </mat-error>
+                </mat-form-field>
+                <input
+                  id="address"
+                  formControlName="documentList"
+                  type="file"
+                  class="file-input"
+                  (change)="changeEvent($event)"
+                  #addressfileUpload
+                  multiple
+                />
+
+                <div class="upload-component">
+                  <p
+                    class="upload-button-placeholder"
+                    *ngIf="this.addressUrl.length == 0; else addTag"
+                  >
+                    Upload Related Documents
+                  </p>
+                  <ng-template #addTag>
+                    <div *ngFor="let item of addressUrl">
+                      <p>{{ item.name }}</p>
+                    </div>
+                  </ng-template>
+
+                  <button
+                    mat-mini-fab
+                    color="primary"
+                    class="upload-btn"
+                    (click)="addressfileUpload.click()"
+                  >
+                    <mat-icon>backup</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <h3 *ngIf="addressProofLink">
+              Show Address
+              <a [href]="addressProofLink">details</a>
+            </h3>
+          </mat-expansion-panel>
+
+          <mat-expansion-panel formGroupName="businessProof">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                Business Proof* (Any one of the following)
+              </mat-panel-title>
+              <mat-panel-description>
+                <mat-icon *ngIf="data && businessProofLink" style="color: green;">check_circle</mat-icon>
+                <mat-icon *ngIf="!data && !businessProofLink" style="color: red;">remove_circle</mat-icon>
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+
+            <div
+              style="
+                width: 95%;
+                align-self: center;
+                justify-content: space-between;
+                font-size: 10px;
+              "
+            >
+              <div
+                style="
+                  display: flex;
+                  justify-content: space-around;
+                  flex-direction: row;
+                "
+              >
+                <mat-form-field class="mat-form-field" appearance="outline">
+                  <mat-label>Document Type</mat-label>
+                  <mat-select formControlName="businessDocType">
+                    <mat-option value="gstnumber"
+                      >GSTN Certificate</mat-option
+                    >
+                    <mat-option value="utilitybill"
+                      >Utility bill for current business address</mat-option
+                    >
+                    <mat-option value="shopact">Shop Act</mat-option>
+                    <mat-option value="firmpan">Firm PAN</mat-option>
+                    <mat-option value="LoS"
+                      >Letter of signatory authorization (for
+                      partnership)</mat-option
+                    >
+                    <mat-option value="udyog">Udyog Aadhar</mat-option>
+                    <mat-option value="board_resolution"
+                      >Board Resolution (For companies)r</mat-option
+                    >
+                  </mat-select>
+                  <mat-error style="color: rgb(241, 14, 14); margin-top: 7px">Please select document type</mat-error>
+                </mat-form-field>
+                <mat-form-field class="mat-form-field" appearance="outline">
+                  <mat-label>Document Number</mat-label>
+                  <input
+                    matInput
+                    formControlName="businessDocNumber"
+                    type="text"
+                    required
+                  />
+                  <mat-error style="color: rgb(241, 14, 14); margin-top: 7px"
+                    >Please enter document number
+                  </mat-error>
+                </mat-form-field>
+                <input
+                  formControlName="documentList"
+                  type="file"
+                  id="business"
+                  class="file-input"
+                  (change)="changeEvent($event)"
+                  #businessfileUpload
+                  multiple
+                />
+
+                <div class="upload-component">
+                  <p
+                    class="upload-button-placeholder"
+                    *ngIf="this.businessUrl.length == 0; else bTag"
+                  >
+                    Upload Related Documents
+                  </p>
+                  <ng-template #bTag>
+                    <div *ngFor="let item of businessUrl">
+                      <p>{{ item.name }}</p>
+                    </div>
+                  </ng-template>
+
+                  <button
+                    mat-mini-fab
+                    color="primary"
+                    class="upload-btn"
+                    (click)="businessfileUpload.click()"
+                  >
+                    <mat-icon>backup</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <h3 *ngIf="businessProofLink">
+              Show Business Proof
+              <a [href]="businessProofLink">details</a>
+            </h3>
+          </mat-expansion-panel>
+
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title
+                >Ownership Proof (Business/Residence) (Any one of the
+                following)</mat-panel-title
+              >
+              <mat-panel-description>
+                <mat-icon *ngIf="data && ownershipProofLink" style="color: green;">check_circle</mat-icon>
+                <mat-icon *ngIf="!data && !ownershipProofLink" style="color: red;">remove_circle</mat-icon>
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+            <div
+              style="
+                width: 95%;
+                align-self: center;
+                justify-content: space-between;
+                font-size: 10px;
+              "
+              formGroupName="ownershipProof"
+            >
+              <div
+                style="
+                  display: flex;
+                  justify-content: space-around;
+                  flex-direction: row;
+                "
+              >
+                <mat-form-field class="mat-form-field" appearance="outline">
+                  <mat-label>Document Type</mat-label>
+                  <mat-select formControlName="ownershipDocType">
+                    <mat-option value="ownershipDoc"
+                      >Property Ownership Document</mat-option
+                    >
+                    <mat-option value="electricbill"
+                      >Electricity Bill</mat-option
+                    >
+                  </mat-select>
+                </mat-form-field>
+                <mat-form-field class="mat-form-field" appearance="outline">
+                  <mat-label>Document Number</mat-label>
+                  <input
+                    matInput
+                    formControlName="ownershipDocNumber"
+                    type="text"
+                  />
+                </mat-form-field>
+                <input
+                  formControlName="documentList"
+                  type="file"
+                  id="ownership"
+                  class="file-input"
+                  (change)="changeEvent($event)"
+                  #ownershipfileUpload
+                  multiple
+                />
+
+                <div class="upload-component">
+                  <p
+                    class="upload-button-placeholder"
+                    *ngIf="this.ownershipUrl.length == 0; else ownerTag"
+                  >
+                    Upload Related Documents
+                  </p>
+                  <ng-template #ownerTag>
+                    <div *ngFor="let item of ownershipUrl">
+                      <p>{{ item.name }}</p>
+                    </div>
+                  </ng-template>
+                  <button
+                    mat-mini-fab
+                    color="primary"
+                    class="upload-btn"
+                    (click)="ownershipfileUpload.click()"
+                  >
+                    <mat-icon>backup</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <h3 *ngIf="ownershipProofLink">
+              Show Ownership Proof
+              <a [href]="ownershipProofLink">details</a>
+            </h3>
+          </mat-expansion-panel>
+
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>Vintage Proof </mat-panel-title>
+              <mat-panel-description>
+                <mat-icon *ngIf="data && VintageProofLink" style="color: green;">check_circle</mat-icon>
+                <mat-icon *ngIf="!data && !VintageProofLink" style="color: red;">remove_circle</mat-icon>
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+            <div
+              style="
+                width: 95%;
+                align-self: center;
+                justify-content: space-between;
+                font-size: 10px;
+              "
+              formGroupName="vintageProof"
+            >
+              <div
+                style="
+                  display: flex;
+                  justify-content: space-around;
+                  flex-direction: row;
+                "
+              >
+                <mat-form-field class="mat-form-field" appearance="outline">
+                  <mat-label>Document Type</mat-label>
+                  <mat-select formControlName="businessvintageProof">
+                    <mat-option value="businessVinatgeProof"
+                      >Business Vintage Proof</mat-option
+                    >
+                  </mat-select>
+                </mat-form-field>
+                <p style="margin-left: 10px; font-size: 14px">
+                  If business & residence is rented then any business proof
+                  showing existence of business for 3 years
+                </p>
+                <input
+                  formControlName="documentList"
+                  type="file"
+                  id="vintage"
+                  class="file-input"
+                  (change)="changeEvent($event)"
+                  #vintagefileUpload
+                  multiple
+                />
+
+                <div class="upload-component">
+                  <p
+                    class="upload-button-placeholder"
+                    *ngIf="this.vintageUrl.length == 0; else vinTag"
+                  >
+                    Upload Related Documents
+                  </p>
+                  <ng-template #vinTag>
+                    <div *ngFor="let item of vintageUrl">
+                      <p>{{ item.name }}</p>
+                    </div>
+                  </ng-template>
+
+                  <button
+                    mat-mini-fab
+                    color="primary"
+                    class="upload-btn"
+                    (click)="vintagefileUpload.click()"
+                  >
+                    <mat-icon>backup</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <h3 *ngIf="VintageProofLink">
+              Show Vintage Proof
+              <a [href]="VintageProofLink">details</a>
+            </h3>
+          </mat-expansion-panel>
+
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>Firm/Partnership Details </mat-panel-title>
+              <mat-panel-description>
+                <mat-icon *ngIf="data && PartnershipLink" style="color: green;">check_circle</mat-icon>
+                <mat-icon *ngIf="!data && !PartnershipLink" style="color: red;">remove_circle</mat-icon>
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+            <div
+              style="
+                width: 95%;
+                align-self: center;
+                justify-content: space-between;
+                font-size: 10px;
+              "
+              formGroupName="partnershipDetails"
+            >
+              <p style="font-size: 10px">
+                Partnership Deed / MOA and AOA, List of shareholders and
+                directors (Including their PAN) as applicable
+              </p>
+              <div
+                style="
+                  display: flex;
+                  justify-content: space-around;
+                  flex-direction: row;
+                "
+              >
+                <input
+                  formControlName="documentList"
+                  type="file"
+                  id="partner"
+                  class="file-input"
+                  (change)="changeEvent($event)"
+                  #partnerfileUpload
+                  multiple
+                />
+
+                <div class="upload-component">
+                  <p
+                    class="upload-button-placeholder"
+                    *ngIf="this.partnershipUrl.length == 0; else partnerTag"
+                  >
+                    Upload Related Documents
+                  </p>
+                  <ng-template #partnerTag>
+                    <div *ngFor="let item of partnershipUrl">
+                      <p>{{ item.name }}</p>
+                    </div>
+                  </ng-template>
+                  <button
+                    mat-mini-fab
+                    color="primary"
+                    class="upload-btn"
+                    (click)="partnerfileUpload.click()"
+                  >
+                    <mat-icon>backup</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <h3 *ngIf="PartnershipLink">
+              Show Partnership
+              <a [href]="PartnershipLink">details</a>
+            </h3>
+          </mat-expansion-panel>
+
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>Banking Details </mat-panel-title>
+              <mat-panel-description>
+                <mat-icon *ngIf="data && BankStatementDetailsLink" style="color: green;">check_circle</mat-icon>
+                <mat-icon *ngIf="!data && !BankStatementDetailsLink" style="color: red;">remove_circle</mat-icon>
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+            <div
+              style="
+                width: 95%;
+                align-self: center;
+                justify-content: space-between;
+                font-size: 10px;
+              "
+              formGroupName="bankingDetails"
+            >
+              <div
+                style="
+                  display: flex;
+                  justify-content: space-around;
+                  flex-direction: row;
+                "
+              >
+                <p style="font-size: 14px; margin-top: 2%">
+                  Bank Statement(Last 6 Months)
+                </p>
+                <input
+                  id="banking"
+                  formControlName="documentList"
+                  type="file"
+                  class="file-input"
+                  (change)="changeEvent($event)"
+                  #bankingfileUpload
+                  multiple
+                />
+
+                <div class="upload-component">
+                  <p
+                    class="upload-button-placeholder"
+                    *ngIf="this.bankingUrl.length == 0; else bankTag"
+                  >
+                    Upload Related Documents
+                  </p>
+                  <ng-template #bankTag>
+                    <div *ngFor="let item of bankingUrl">
+                      <p>{{ item.name }}</p>
+                    </div>
+                  </ng-template>
+
+                  <button
+                    mat-mini-fab
+                    color="primary"
+                    class="upload-btn"
+                    (click)="bankingfileUpload.click()"
+                  >
+                    <mat-icon>backup</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <h3 *ngIf="BankStatementDetailsLink">
+              Show Banking
+              <a [href]="BankStatementDetailsLink">details</a>
+            </h3>
+          </mat-expansion-panel>
+
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title
+                >Financial & GST Returns (Upto 24 Months)
+              </mat-panel-title>
+              <mat-panel-description>
+                <mat-icon *ngIf="data && FinancialDetailsLink" style="color: green;">check_circle</mat-icon>
+                <mat-icon *ngIf="!data && !FinancialDetailsLink" style="color: red;">remove_circle</mat-icon>
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+            <div
+              formGroupName="financialDetails"
+              style="
+                width: 95%;
+                align-self: center;
+                justify-content: space-between;
+                font-size: 10px;
+              "
+            >
+              <h4>Financial Details</h4>
+              <div
+                style="
+                  display: flex;
+                  justify-content: space-around;
+                  flex-direction: row;
+                  width: 70%;
+                "
+              >
+                <mat-form-field class="mat-form-field" appearance="outline">
+                  <mat-label>Document Type:</mat-label>
+                  <mat-select formControlName="financial_doc_1">
+                    <mat-option value="p_and_l">P & L</mat-option>
+                    <mat-option value="balance_sheet"
+                      >Balance Sheet</mat-option
+                    >
+                    <mat-option value="other_schedules"
+                      >Other Schedules</mat-option
+                    >
+                  </mat-select>
+                </mat-form-field>
+
+                <input
+                  formControlName="doc_file_1"
+                  type="file"
+                  id="finance_doc_1"
+                  class="file-input"
+                  multiple
+                  (change)="changeEvent($event)"
+                  #finance_doc_1fileUpload
+                />
+                <div class="upload-component">
+                  <p
+                    class="upload-button-placeholder"
+                    *ngIf="this.doc1.length == 0; else doc1Tag"
+                  >
+                    Upload Related Documents
+                  </p>
+                  <ng-template #doc1Tag>
+                    <div *ngFor="let item of doc1">
+                      <p>{{ item.name }}</p>
+                    </div>
+                  </ng-template>
+
+                  <button
+                    mat-mini-fab
+                    color="primary"
+                    class="upload-btn"
+                    (click)="finance_doc_1fileUpload.click()"
+                  >
+                    <mat-icon>backup</mat-icon>
+                  </button>
+                </div>
+              </div>
+              <div
+                style="
+                  display: flex;
+                  justify-content: space-around;
+                  flex-direction: row;
+                  width: 70%;
+                "
+              >
+                <mat-form-field class="mat-form-field" appearance="outline">
+                  <mat-label>Document Type</mat-label>
+                  <mat-select formControlName="financial_doc_2">
+                    <mat-option value="p_and_l">P & L</mat-option>
+                    <mat-option value="balance_sheet"
+                      >Balance Sheet</mat-option
+                    >
+                    <mat-option value="other_schedules"
+                      >Other Schedules</mat-option
+                    >
+                  </mat-select>
+                </mat-form-field>
+
+                <input
+                  formControlName="doc_file_2"
+                  type="file"
+                  id="finance_doc_2"
+                  class="file-input"
+                  multiple
+                  (change)="changeEvent($event)"
+                  #finance_doc_2fileUpload
+                />
+
+                <div class="upload-component">
+                  <p
+                    class="upload-button-placeholder"
+                    *ngIf="this.doc2.length == 0; else doc2Tag"
+                  >
+                    Upload Related Documents
+                  </p>
+                  <ng-template #doc2Tag>
+                    <div *ngFor="let item of doc2">
+                      <p>{{ item.name }}</p>
+                    </div>
+                  </ng-template>
+
+                  <button
+                    mat-mini-fab
+                    color="primary"
+                    class="upload-btn"
+                    (click)="finance_doc_2fileUpload.click()"
+                  >
+                    <mat-icon>backup</mat-icon>
+                  </button>
+                </div>
+              </div>
+              <div
+                style="
+                  display: flex;
+                  justify-content: space-around;
+                  flex-direction: row;
+                  width: 70%;
+                "
+              >
+                <mat-form-field class="mat-form-field" appearance="outline">
+                  <mat-label>Document Type</mat-label>
+                  <mat-select formControlName="financial_doc_3">
+                    <mat-option value="p_and_l">P & L</mat-option>
+                    <mat-option value="balance_sheet"
+                      >Balance Sheet</mat-option
+                    >
+                    <mat-option value="other_schedules"
+                      >Other Schedules</mat-option
+                    >
+                  </mat-select>
+                </mat-form-field>
+
+                <input
+                  formControlName="doc_file_3"
+                  type="file"
+                  id="finance_doc_3"
+                  class="file-input"
+                  multiple
+                  (change)="changeEvent($event)"
+                  #finance_doc_3fileUpload
+                />
+
+                <div class="upload-component">
+                  <p
+                    class="upload-button-placeholder"
+                    *ngIf="this.doc3.length == 0; else doc3Tag"
+                  >
+                    Upload Related Documents
+                  </p>
+                  <ng-template #doc3Tag>
+                    <div *ngFor="let item of doc3">
+                      <p>{{ item.name }}</p>
+                    </div>
+                  </ng-template>
+                  <button
+                    mat-mini-fab
+                    color="primary"
+                    class="upload-btn"
+                    (click)="finance_doc_3fileUpload.click()"
+                  >
+                    <mat-icon>backup</mat-icon>
+                  </button>
+                </div>
+              </div>
+              <h4>GST Details</h4>
+              <div
+                style="
+                  display: flex;
+
+                  flex-direction: row;
+                  width: 100%;
+                "
+              >
+                <input
+                  formControlName="gstDocList"
+                  type="file"
+                  id="gst_file"
+                  class="file-input"
+                  multiple
+                  (change)="changeEvent($event)"
+                  #gstfileUpload
+                />
+
+                <p style="align-self: center; margin-left: 40px">
+                  GST Return Files
+                </p>
+
+                <div class="upload-component">
+                  <p
+                    class="upload-button-placeholder"
+                    *ngIf="this.gstUrl.length == 0; else gstTag"
+                  >
+                    Upload Related Documents
+                  </p>
+                  <ng-template #gstTag>
+                    <div *ngFor="let item of gstUrl">
+                      <p style="margin-top: 5%">
+                        {{ item.name }}
+                      </p>
+                    </div>
+                  </ng-template>
+
+                  <button
+                    mat-mini-fab
+                    color="primary"
+                    class="upload-btn"
+                    (click)="gstfileUpload.click()"
+                  >
+                    <mat-icon>backup</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <h3 *ngIf="FinancialDetailsLink">
+              Show Financial
+              <a [href]="FinancialDetailsLink">details</a>
+            </h3>
+          </mat-expansion-panel>
+          <!-- ==================================== -->
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                Upload Store Images
+              </mat-panel-title>
+              <mat-panel-description>
+                <!-- <mat-icon style="color: green;">check_circle</mat-icon> -->
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+            <div>
+              <div>
+                <img *ngFor="let url of urls" [src]="url"  width="180" style="margin: 5px;">
+              </div>
+              <div>
+                <input type="file" #imageInput multiple (change)="detectFiles($event)" style="vertical-align: middle; margin: 5px;">
+              </div>
+              <div>
+                <button  mat-flat-butto style=" margin: 5px;" type="button" mat-raised-button (click)="imageInput.click()">
+                  Select Images
+                </button>
+              </div>
+            </div>
+            <label>NOTE: Please upload atleast three images of the shop</label>
+            <p>
+              1 - Store front photo along with store name from outside of the premises.<br>
+              2 - Selfie of the registered owner along with inside area of the shop.<br>
+              3 - Photo of current stock/inventory of inside the shop. <br>
+            </p>
+
+        </mat-expansion-panel>
+          <!-- ==================================== -->
+        </mat-accordion>
+        <button mat-raised-button color="primary" (click)="onSubmit()">
+           SUBMIT
+        </button>
+      </form>
+
+      </mat-accordion>
+    </div>
+  </div>
+</app-layout>

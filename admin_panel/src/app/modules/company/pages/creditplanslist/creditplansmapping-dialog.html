@@ -1,0 +1,62 @@
+<div id="creditplansmapping-dialog">
+  <mat-dialog-content>
+    <h1 class="text-center">Select List of Buyers</h1>
+    <form
+      [formGroup]="companyMap_form"
+      class="example-form"
+      (ngSubmit)="onMapCompanies()"
+    >
+      <mat-form-field appearance="outline">
+        <mat-label>Buyers List</mat-label>
+
+        <!-- <input matInput formControlName="buyers" (input)="getCompanies($event)">
+        <mat-select multiple>
+          <mat-option *ngFor="let buyer of company_Name" [value]="buyer._id">{{buyer.company_name}}</mat-option>
+        </mat-select> -->
+
+        <input
+          type="text"
+          placeholder="Pick one"
+          aria-label="Number"
+          matInput
+          (input)="getCompanies($event)"
+          [formControl]="myControl"
+          [matAutocomplete]="auto"
+        />
+        <mat-autocomplete
+          autoActiveFirstOption
+          [displayWith]="displayFn"
+          (optionSelected)="onChange($event.option.value)"
+          #auto="matAutocomplete"
+        >
+          <mat-option *ngFor="let option of company_Name" [value]="option">
+            {{option.company_name}}
+          </mat-option>
+        </mat-autocomplete>
+
+        <!-- <mat-select formControlName="buyers" multiple>
+          <mat-option *ngFor="let buyer of buyersList" [value]="buyer._id">{{buyer.company_name}}</mat-option>
+        </mat-select> -->
+      </mat-form-field>
+
+      <div class="input-wrapper text-center">
+        <button
+          type="submit"
+          mat-flat-button
+          class="btn-dark"
+          style="margin: 5px"
+        >
+          Map Buyers
+        </button>
+        <button
+          type="button"
+          (click)="cancel()"
+          mat-flat-button
+          class="btn-dark"
+        >
+          CANCEL
+        </button>
+      </div>
+    </form>
+  </mat-dialog-content>
+</div>

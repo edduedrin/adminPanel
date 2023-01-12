@@ -1,0 +1,301 @@
+<app-layout>
+  <div id="paymenthistory-page">
+    <div class="main-wrapper">
+      <h2>Payment History</h2>
+
+      <!-- <mat-form-field appearance="outline">
+        <mat-label>Search Invoice Number</mat-label>
+        <input
+          matInput
+          (keyup)="applyFilterInvoiceNo($event)"
+          placeholder="Search Invoice Number"
+          [formControl]="invoiceNumberControl"
+        />
+        <button type="button" mat-button (click)="clear(invoiceNumberControl)" matSuffix mat-icon-button aria-label="Clear" >
+          <mat-icon>close</mat-icon>
+        </button> 
+      </mat-form-field> -->
+
+      <!-- <mat-form-field appearance="outline">
+        <mat-label>Invoice Date</mat-label>
+        <input
+          matInput
+          [matDatepicker]="datepicker"
+          [max]="maxDate"
+          [(ngModel)]="invoiceDate"
+        />
+        <mat-datepicker-toggle
+          matSuffix
+          [for]="datepicker"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #datepicker>
+          <mat-datepicker-actions>
+            <button mat-button matDatepickerCancel>Cancel</button>
+            <button
+              mat-raised-button
+              color="primary"
+              (click)="invoicedate()"
+              matDatepickerApply
+            >
+              Apply
+            </button>
+          </mat-datepicker-actions>
+        </mat-datepicker>
+      </mat-form-field> -->
+
+      <mat-form-field appearance="outline" class="right-box">
+        <mat-select [(value)]="userType" (selectionChange)="getUserType()">
+          <mat-option value="" selected>Select User Type</mat-option>
+          <mat-option value="buyer">Buyer</mat-option>
+          <mat-option value="seller">Seller</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="autosuggetion left-box">
+        <input
+          type="text"
+          placeholder="Select User"
+          matInput
+          [formControl]="companySelect"
+          [matAutocomplete]="auto"
+          (input)="companySuggetion($event)"
+        />
+        <mat-autocomplete
+          #auto="matAutocomplete"
+          [displayWith]="displayFn"
+          (optionSelected)="getPosts($event.option.value)"
+        >
+          <mat-option *ngFor="let company of company_Name" [value]="company">
+            {{ company.company_name }}
+          </mat-option>
+        </mat-autocomplete>
+        <button
+          type="button"
+          mat-button
+          (click)="company_name_clear(companySelect)"
+          matSuffix
+          mat-icon-button
+          aria-label="Clear"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Payment Date</mat-label>
+        <input
+          matInput
+          [matDatepicker]="datepicker1"
+          [max]="maxDate"
+          [(ngModel)]="paymentDate"
+          readonly
+        />
+        <mat-datepicker-toggle
+          matSuffix
+          [for]="datepicker1"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #datepicker1>
+          <mat-datepicker-actions>
+            <button mat-button matDatepickerCancel>Cancel</button>
+            <button
+              mat-raised-button
+              color="primary"
+              matDatepickerApply
+              (click)="paymentDateFilter()"
+            >
+              Apply
+            </button>
+          </mat-datepicker-actions>
+        </mat-datepicker>
+      </mat-form-field>
+
+      <table
+        mat-table
+        [dataSource]="dataSource"
+        matSort
+        (matSortChange)="announceSortChange($event)"
+        class="mat-elevation-z2"
+      >
+        <!-- invoiceno Column -->
+        <ng-container matColumnDef="invoiceno">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            mat-sort-header
+            sortActionDescription="Sort by invoiceno"
+          >
+            Invoice No
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{
+              element && element.invoice_number ? element.invoice_number : ""
+            }}
+          </td>
+        </ng-container>
+
+        <!-- seller Column -->
+        <ng-container matColumnDef="sellername">
+          <th
+            mat-header-cell
+            mat-sort-header
+            sortActionDescription="Sort by sellername"
+            *matHeaderCellDef
+          >
+            Seller Name
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <b>
+              {{ element && element.seller_name ? element.seller_name : "" }}
+            </b>
+          </td>
+        </ng-container>
+
+        <!-- buyername Column -->
+        <ng-container matColumnDef="buyername">
+          <th
+            mat-header-cell
+            mat-sort-header
+            sortActionDescription="Sort by buyername"
+            *matHeaderCellDef
+          >
+            Buyer Name
+          </th>
+          <td mat-cell *matCellDef="let element">
+           <b>
+            {{ element && element.buyer_name ? element.buyer_name : "" }}
+           </b>
+          </td>
+        </ng-container>
+
+        <!-- Odred Id Column-->
+        <ng-container matColumnDef="orderid">
+          <th
+            mat-header-cell
+            mat-sort-header
+            sortActionDescription="Sort by orderid"
+            *matHeaderCellDef
+          >
+            Order Id
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element && element.cf_order_id ? element.cf_order_id : (element.order_id ? element.order_id : "") }}
+          </td>
+        </ng-container>
+
+        <!-- paymentdate Column -->
+        <ng-container matColumnDef="created_at">
+          <th
+            mat-header-cell
+            mat-sort-header
+            sortActionDescription="Sort by created_at"
+            *matHeaderCellDef
+          >
+            Payment Date
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{
+              (element.payment_date ? element.payment_date : "") | date: Date_Format
+            }}
+          </td>
+        </ng-container>
+
+        <!-- invoiceamount Column -->
+        <!-- <ng-container matColumnDef="invoiceamount">
+          <th
+            mat-header-cell
+            mat-sort-header
+            sortActionDescription="Sort by invoiceamount"
+            *matHeaderCellDef
+          >
+            Invoice Amount
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{
+              (element && element.invoice && element.invoice.invoice_amount
+                ? element.invoice.invoice_amount
+                : "") | currency : Currency_Format
+            }}
+          </td>
+        </ng-container> -->
+
+        <ng-container matColumnDef="payment_mode">
+          <th
+            mat-header-cell
+            mat-sort-header
+            sortActionDescription="Sort by payment_mode"
+            *matHeaderCellDef
+          >
+          Payment Mode
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element && element.payment_mode ? element.payment_mode : "" }}
+          </td>
+        </ng-container>
+
+        <!-- paidamount Column -->
+        <ng-container matColumnDef="paidamount">
+          <th
+            mat-header-cell
+            mat-sort-header
+            sortActionDescription="Sort by paidamount"
+            *matHeaderCellDef
+          >
+            Paid Amount
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{
+              (element && element.order_amount ? element.order_amount : "")
+                | currency: Currency_Format
+            }}
+          </td>
+        </ng-container>
+
+        <!-- status Column -->
+        <ng-container matColumnDef="status">
+          <th
+            mat-header-cell
+            mat-sort-header
+            sortActionDescription="Sort by status"
+            *matHeaderCellDef
+          >
+            Status
+          </th>
+          <td mat-cell *matCellDef="let element">
+           <b>
+            {{ element && element.order_status ? element.order_status : "" }}
+           </b>
+          </td>
+        </ng-container>
+
+        <!-- Action Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef class="actioncol">Action</th>
+          <td mat-cell *matCellDef="let element" class="text-right">
+            <button
+              mat-mini-fab
+              class="btn-view"
+              matTooltip="Change Status"
+              (click)="openDialog(element)"
+              aria-label="Example icon button with a delete icon"
+            >
+              <!-- Change Status -->
+              <mat-icon>swap_horiz</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        <tr class="mat-row" *matNoDataRow>
+          <td class="text-center">No Record Found</td>
+        </tr>
+      </table>
+      <mat-paginator
+        [pageSizeOptions]="[10, 20, 50]"
+        showFirstLastButtons
+        aria-label="Select page of periodic elements"
+      >
+      </mat-paginator>
+    </div>
+  </div>
+</app-layout>

@@ -1,0 +1,226 @@
+<app-layout>
+  <div id="over-due-invoices-page">
+    <div class="main-wrapper">
+      <h2>Overdue Invoices</h2>
+
+      <table
+        mat-table
+        [dataSource]="dataSource"
+        matSort
+        (matSortChange)="announceSortChange($event)"
+        class="mat-elevation-z2"
+      >
+        <!-- Invoice Number Column -->
+        <ng-container matColumnDef="invoice_number">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            mat-sort-header
+            sortActionDescription="Sort by invoice_number"
+          >
+            Invoice Number
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element && element.invoice_number ? element.invoice_number : ""}}
+          </td>
+        </ng-container>
+
+        <!-- Buyer Name Column -->
+        <ng-container matColumnDef="buyer_name">
+          <th
+            mat-header-cell
+            mat-sort-header
+            sortActionDescription="Sort by buyer_name"
+            *matHeaderCellDef
+          >
+            Buyer Name
+          </th>
+          <td mat-cell *matCellDef="let element">
+          <b>
+            {{ element && element.buyer_name ? element.buyer_name : ""}}
+          </b>
+          </td>
+        </ng-container>
+
+        <!-- Seller Name Column -->
+        <ng-container matColumnDef="seller_name">
+          <th
+            mat-header-cell
+            mat-sort-header
+            sortActionDescription="Sort by seller_name"
+            *matHeaderCellDef
+          >
+            Seller Name
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <b>
+              {{ element && element.seller_name ? element.seller_name : "" }}
+            </b>
+          </td>
+        </ng-container>
+
+        <!-- Invoice Date Column -->
+        <ng-container matColumnDef="invoice_date">
+          <th
+            mat-header-cell
+            mat-sort-header
+            sortActionDescription="Sort by invoice_date"
+            *matHeaderCellDef
+          >
+            Invoice Date
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ (element && element.invoice_date ? element.invoice_date : "") | date : Date_Format }}
+          </td>
+        </ng-container>
+
+        <!-- Invoice Amount -->
+        <ng-container matColumnDef="invoice_amount">
+          <th
+            mat-header-cell
+            mat-sort-header
+            sortActionDescription="Sort by invoice_amount"
+            *matHeaderCellDef
+          >
+            Invoice Amount
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ ( element && element.invoice_amount ? element.invoice_amount : "") | currency: currency_format }}
+          </td>
+        </ng-container>
+
+        <!-- Invoice Due Date Column -->
+        <ng-container matColumnDef="invoice_due_date">
+          <th
+            mat-header-cell
+            mat-sort-header
+            sortActionDescription="Sort by invoice_due_date"
+            *matHeaderCellDef
+          >
+            Invoice Due Date
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ ( element && element.invoice_due_date ? element.invoice_due_date : "") | date : Date_Format }}
+          </td>
+        </ng-container>
+
+        <!-- Outstanding Amount Column -->
+        <ng-container matColumnDef="outstanding_amount">
+          <th
+            mat-header-cell
+            mat-sort-header
+            sortActionDescription="Sort by outstanding_amount"
+            *matHeaderCellDef
+          >
+            Outstanding Amount
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ ( element && element.outstanding_amount ? element.outstanding_amount : "") | currency: currency_format }}
+          </td>
+        </ng-container>
+
+        <!-- Previous Credit Limit -->
+
+        <ng-container matColumnDef="previous_credit">
+          <th
+            mat-header-cell
+            mat-sort-header
+            sortActionDescription="Sort by previous_credit"
+            *matHeaderCellDef
+          >
+          Previous Credit Limit
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ (element && element.previous_credit ? element.previous_credit : 0) | currency: currency_format }}
+          </td>
+        </ng-container>
+
+        <!-- Inv Age Column -->
+        <ng-container matColumnDef="invoice_age">
+          <th
+            mat-header-cell
+            mat-sort-header
+            sortActionDescription="Sort by invoice_age"
+            *matHeaderCellDef
+          >
+            Inv Age
+          </th>
+          <td mat-cell *matCellDef="let element">
+              {{ element && element.invoice_age ? element.invoice_age : ""}}
+          </td>
+        </ng-container>
+
+        <!-- Invoice Status Column -->
+        <ng-container matColumnDef="invoice_status">
+          <th
+            mat-header-cell
+            mat-sort-header
+            sortActionDescription="Sort by invoice_status"
+            *matHeaderCellDef
+          >
+            Invoice Status
+          </th>
+          <td mat-cell *matCellDef="let element">
+           <b>
+            {{ element && element.invoice_status ? element.invoice_status : "" }}
+           </b>
+          </td>
+        </ng-container>
+
+        <!-- Collection Status Column -->
+        <ng-container matColumnDef="collection_status">
+          <th
+            mat-header-cell
+            mat-sort-header
+            sortActionDescription="Sort by collection_status"
+            *matHeaderCellDef
+          >
+            Collection Status
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element && element.collection_status ? element.collection_status : ""}}
+          </td>
+        </ng-container>
+
+        <!-- Action Column -->
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef class="actioncol">Action</th>
+          <td mat-cell *matCellDef="let row" style="text-align: center">
+            <button
+              mat-mini-fab
+              class="btn-view"
+              matTooltip="Manage Collection"
+              (click)="openManageInvoice(row._id)"
+              aria-label="Example icon button with a delete icon"
+            >
+              <mat-icon>edit</mat-icon>
+            </button>
+
+            <button
+              type="button"
+              mat-mini-fab
+              class="btn-view"
+              matTooltip="Comments History"
+              (click)="openCommentsDialog(row)"
+              aria-label="Example icon button with a delete icon"
+            >
+              <mat-icon>comment</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        <tr class="mat-row" *matNoDataRow>
+          <td class="text-center">No Overdue Invoice Found</td>
+        </tr>
+      </table>
+      <mat-paginator
+        [pageSizeOptions]="[10, 25, 50]"
+        showFirstLastButtons
+        aria-label="Select page of periodic elements"
+      >
+      </mat-paginator>
+    </div>
+  </div>
+</app-layout>
