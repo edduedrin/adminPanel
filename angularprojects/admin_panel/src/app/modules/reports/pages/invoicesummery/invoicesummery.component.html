@@ -1,0 +1,435 @@
+<app-layout>
+  <div id="invoicesummery-page">
+    <div class="main-wrapper">
+      <h2>Invoice Summary</h2>
+      <div>
+        <button
+          mat-icon-button
+          (click)="
+            exporter.exportTable('xlsx', {
+              fileName: 'Invoice_Summary',
+              sheet: 'Invoice_Summary',
+              Props: { Author: 'Xuriti' }
+            })
+          "
+          matTooltip="Export Excel"
+          matTooltipPosition="below"
+          class="exel-icon"
+          aria-label="Example icon button with a menu icon"
+        >
+        <mat-icon>assignment_returned</mat-icon>
+        </button>
+
+        <!-- Invoice no search field -->
+        <!-- <mat-form-field appearance="outline">
+          <mat-label>Invoice Number</mat-label>
+          <input
+            matInput
+            (keyup)="applyFilterInvoiceNo($event)"
+            matInput
+            placeholder="Search by Invoice Number"
+            [formControl]="invoiceNumberControl"
+          />
+          <button
+            type="button"
+            mat-button
+            (click)="clearInvoiceNumber()"
+            matSuffix
+            mat-icon-button
+            aria-label="Clear"
+          >
+            <mat-icon>close</mat-icon>
+          </button>
+        </mat-form-field> -->
+
+        <!-- Search by company name -->
+        <mat-form-field appearance="outline" class="autosuggetion left-box">
+          <input
+            type="text"
+            placeholder="Seller Company"
+            matInput
+            [formControl]="company_select"
+            [matAutocomplete]="auto"
+            (input)="companySuggetion($event)"
+          />
+          <mat-autocomplete
+            #auto="matAutocomplete"
+            [displayWith]="displayFn"
+            (optionSelected)="getPosts($event.option.value)"
+          >
+            <mat-option *ngFor="let company of company_Name" [value]="company">
+              {{ company.company_name }}
+            </mat-option>
+          </mat-autocomplete>
+          <button
+            type="button"
+            mat-button
+            (click)="company_name_clear(company_select)"
+            matSuffix
+            mat-icon-button
+            aria-label="Clear"
+          >
+            <mat-icon>close</mat-icon>
+          </button>
+        </mat-form-field>
+
+        <!-- Date range -->
+        <!-- <mat-form-field appearance="outline">
+          <mat-label>Invoice Date Range</mat-label>
+          <mat-date-range-input
+            [rangePicker]="rangePicker"
+            [formGroup]="dateRange"
+            [max]="maxDate"
+          >
+            <input
+              matStartDate
+              placeholder="Start date"
+              formControlName="start"
+              readonly
+            />
+            <input
+              matEndDate
+              placeholder="End date"
+              formControlName="end"
+              readonly
+            />
+          </mat-date-range-input>
+          <mat-datepicker-toggle
+            matSuffix
+            [for]="rangePicker"
+          ></mat-datepicker-toggle>
+          <mat-date-range-picker #rangePicker>
+            <mat-date-range-picker-actions>
+              <button mat-button matDateRangePickerCancel>Cancel</button>
+              <button
+                mat-raised-button
+                color="primary"
+                matDateRangePickerApply
+                (click)="datefilter()"
+              >
+                Apply
+              </button>
+            </mat-date-range-picker-actions>
+          </mat-date-range-picker>
+        </mat-form-field> -->
+      </div>
+
+      <table
+      mat-table
+      matTableExporter
+      #exporter="matTableExporter"
+      [dataSource]="dataSource"
+      matSort
+      (matSortChange)="announceSortChange($event)"
+      class="mat-elevation-z2"
+      >
+
+      <!-- invoice_number -->
+      <ng-container matColumnDef="invoice_number">
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+          sortActionDescription="Sort by invoice_number"
+        >
+          Invoice Number
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element && element.invoice_data && element.invoice_data.invoice_number ? element.invoice_data.invoice_number : ''}}
+        </td>
+      </ng-container>
+
+      <!-- seller Column -->
+      <ng-container matColumnDef="seller">
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+          sortActionDescription="Sort by seller"
+        >
+          Seller Name
+        </th>
+        <td mat-cell *matCellDef="let element">
+          <b>
+          {{ element && element.invoice_data && element.invoice_data.seller && element.invoice_data.seller.company_name ? element.invoice_data.seller.company_name : '' }}
+          </b>
+        </td>
+      </ng-container>
+
+      <!-- buyer -->
+      <ng-container matColumnDef="buyer">
+        <th
+          mat-header-cell
+          mat-sort-header
+          sortActionDescription="Sort by buyer"
+          *matHeaderCellDef
+        >
+          Buyer Name
+        </th>
+        <td mat-cell *matCellDef="let element">
+          <b>
+            {{ 
+              element && element.invoice_data && element.invoice_data.buyer && element.invoice_data.buyer.company_name ? element.invoice_data.buyer.company_name : ''
+            }}
+          </b>
+        </td>
+      </ng-container>
+
+      <!-- invoice_date Column -->
+      <ng-container matColumnDef="invoice_date">
+        <th
+          mat-header-cell
+          mat-sort-header
+          sortActionDescription="Sort by invoice_date"
+          *matHeaderCellDef
+        >
+          Invoice Date
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{
+            (element && element.invoice_data && element.invoice_data.invoice_date ? element.invoice_data.invoice_date : '') | date: Date_Format
+          }}
+        </td>
+      </ng-container>
+
+      <!-- GST amount Column -->
+      <ng-container matColumnDef="total_tax">
+        <th
+          mat-header-cell
+          mat-sort-header
+          sortActionDescription="Sort by total_tax"
+          *matHeaderCellDef
+        >
+          GST Amount
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{
+            numberformat(element && element.invoice_data && element.invoice_data.bill_details && element.invoice_data.bill_details.gst_summary && element.invoice_data.bill_details.gst_summary.total_tax ? element.invoice_data.bill_details.gst_summary.total_tax : 0) 
+          }}
+        </td>
+      </ng-container>
+
+      <!-- invoice_amount Column -->
+      <ng-container matColumnDef="invoice_amount">
+        <th
+          mat-header-cell
+          mat-sort-header
+          sortActionDescription="Sort by invoice_amount"
+          *matHeaderCellDef
+        >
+          Invoice Amount
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{
+            numberformat(element && element.invoice_data && element.invoice_data.invoice_amount ? element.invoice_data.invoice_amount : 0) 
+          }}
+        </td>
+      </ng-container>
+
+      <!-- total_invoice_amount Column -->
+      <ng-container matColumnDef="total_invoice_amount">
+        <th
+          mat-header-cell
+          mat-sort-header
+          *matHeaderCellDef
+        >
+          Total Invoice Amount
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{
+            numberformat(getTotalAmount(element)) 
+          }}
+        </td>
+      </ng-container>
+
+      <!-- Discount Column -->
+      <ng-container matColumnDef="paid_discount">
+        <th
+          mat-header-cell
+          mat-sort-header
+          sortActionDescription="Sort by paid_discount"
+          *matHeaderCellDef
+        >
+          Discount Paid
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{
+            numberformat(element && element.invoice_data && element.invoice_data.paid_discount ? element.invoice_data.paid_discount : 0) 
+          }}
+        </td>
+      </ng-container>
+
+      <!-- Interest Column -->
+      <ng-container matColumnDef="paid_interest">
+        <th
+          mat-header-cell
+          mat-sort-header
+          sortActionDescription="Sort by paid_interest"
+          *matHeaderCellDef
+        >
+          Interest Paid
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{
+            numberformat(element && element.invoice_data && element.invoice_data.paid_interest ? element.invoice_data.paid_interest : 0) 
+          }}
+        </td>
+      </ng-container>
+
+      <!-- already_paid_amount  Column -->
+      <ng-container matColumnDef="already_paid_amount">
+        <th
+          mat-header-cell
+          mat-sort-header
+          sortActionDescription="Sort by already_paid_amount"
+          *matHeaderCellDef
+        >
+         Amount Paid
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ numberformat(element && element.invoice_data && element.invoice_data.already_paid_amount ? element.invoice_data.already_paid_amount : 0) }}
+        </td>
+      </ng-container>
+
+      <!-- outstanding_amount Column -->
+      <ng-container matColumnDef="outstanding_amount">
+        <th
+          mat-header-cell
+          mat-sort-header
+          sortActionDescription="Sort by outstanding_amount"
+          *matHeaderCellDef
+        >
+         OutStanding Amount
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ numberformat(getOutstandingAmount(element)) }}
+        </td>
+      </ng-container>
+
+       <!-- Discount Amount Column -->
+       <ng-container matColumnDef="discount">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by discount"
+          i18n="@@BA9">
+          Discount Applicable
+        </th>
+        <td mat-cell *matCellDef="let element" i18n="@@BA10" style="color: green;">
+          {{  numberformat(element && element.invoice_data && element.invoice_data.discount ? element.invoice_data.discount : 0) }}
+        </td>
+      </ng-container>
+
+      <!-- Interest Amount Column -->
+      <ng-container matColumnDef="interest">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by interest"
+          i18n="@@BA9">
+          Interest Applicable
+        </th>
+        <td mat-cell *matCellDef="let element" i18n="@@BA10" style="color: red;">
+          {{  numberformat(element && element.invoice_data && element.invoice_data.interest ? element.invoice_data.interest : 0) }}
+        </td>
+      </ng-container>
+
+      <!-- Payable Amount Column -->
+      <ng-container matColumnDef="payable_amount">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by payable_amount"
+          i18n="@@BA9">
+          Payable Amount
+        </th>
+        <td mat-cell *matCellDef="let element" i18n="@@BA10">
+          {{ getPayableAmount(element) }}
+        </td>
+      </ng-container>
+
+      <!-- invoice_due_date Column-->
+      <ng-container matColumnDef="invoice_due_date">
+        <th
+          mat-header-cell
+          mat-sort-header
+          sortActionDescription="Sort by invoice_due_date"
+          *matHeaderCellDef
+        >
+          Invoice Due Date
+        </th>
+        <td mat-cell *matCellDef="let element" style="padding-right: 5px;">
+            {{ getDate(element && element.invoice_data && element.invoice_data.invoice_due_date ? element.invoice_data.invoice_due_date : '') | date : Date_Format}}
+        </td>
+      </ng-container>
+
+      <!-- invoice_status -->
+      <ng-container matColumnDef="invoice_status">
+        <th
+          mat-header-cell
+          mat-sort-header
+          sortActionDescription="Sort by invoice_status"
+          *matHeaderCellDef
+        >
+          Invoice Status
+        </th>
+        <td mat-cell *matCellDef="let element" style="padding-right: 5px;">
+          <b>
+            {{element && element.invoice_data && element.invoice_data.invoice_status ? element.invoice_data.invoice_status : ''}}
+          </b>
+        </td>
+      </ng-container>
+
+      <!-- invoice_upload Column-->
+      <ng-container matColumnDef="createdAt">
+        <th
+          mat-header-cell
+          mat-sort-header
+          sortActionDescription="Sort by createdAt"
+          *matHeaderCellDef
+        >
+          Invoice Uploaded At
+        </th>
+        <td mat-cell *matCellDef="let element" style="padding-right: 5px;">
+            {{ (element && element.invoice_data && element.invoice_data.createdAt ? element.invoice_data.createdAt : '') | date : Date_Format}}
+        </td>
+      </ng-container>
+
+      <!-- invoice_confirm_date Column-->
+      <!-- <ng-container matColumnDef="invoice_confirm_date">
+          <th
+            mat-header-cell
+            mat-sort-header
+            sortActionDescription="Sort by invoice_confirm_date"
+            *matHeaderCellDef
+          >
+            Invoice Confirmed At
+          </th>
+          <td mat-cell *matCellDef="let element">
+              {{ getDate(element && element.invoice_data.invoice_confirm_date ? element.invoice_data.invoice_confirm_date : '') | date : Date_Format}}
+          </td>
+        </ng-container> -->
+
+      <!-- invoice_payment_date -->
+      <ng-container matColumnDef="last_payment_date">
+          <th
+            mat-header-cell
+            mat-sort-header
+            sortActionDescription="Sort by last_payment_date"
+            *matHeaderCellDef
+          >
+            Last Payment Date
+          </th>
+          <td mat-cell *matCellDef="let element" style="padding-left: 5px;">
+              {{ getDate(element && element.invoice_data && element.invoice_data.last_payment_date ? element.invoice_data.last_payment_date : '') | date : Date_Format }}
+          </td>
+        </ng-container>
+      
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      <tr class="mat-row" *matNoDataRow>
+        <td class="text-center">
+          No Invoice Found
+        </td>
+      </tr>
+    </table>
+    <mat-paginator
+      [pageSizeOptions]="[10,20,50]"
+      showFirstLastButtons
+      aria-label="Select page of periodic elements"
+    >
+    </mat-paginator>
+  </div>
+  </div>
+</app-layout>

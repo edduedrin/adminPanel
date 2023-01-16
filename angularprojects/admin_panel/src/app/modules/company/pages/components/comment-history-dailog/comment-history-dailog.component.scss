@@ -1,0 +1,48 @@
+#comments-history-dialog {
+
+    width: 600px;     
+ 
+    table {
+      width: 100%;
+    }
+    .mat-header-cell {
+      font-size: 14px;
+  
+      background: black;
+      color: white;
+    }
+  
+    .add-dailog{
+      display: flex;
+      justify-content: space-between;
+  
+      .mat-icon-button {
+        padding: 0;
+        min-width: 0;
+        width: 25px;
+        height: 25px;
+        flex-shrink: 0;
+        line-height: 25px;
+        border-radius: 50%;
+      }
+  
+      .mat-icon {
+        font-size: 15px;
+      }
+    }
+
+    .comments {
+        margin-top: 30px;
+        max-width: 400px;
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
+        button {
+          background: black;
+          color: white;
+        }
+      }
+  
+    @media only screen and (max-width: 767px) {
+    }
+  }

@@ -1,0 +1,114 @@
+#dashpage-page {
+  .main-wrapper {
+    padding: 15px;
+  }
+  table {
+    width: 100%;
+  }
+  .mat-header-cell {
+    font-size: 14px;
+
+    background: black;
+    color: white;
+  }
+  .mat-form-field {
+    margin-right: 15px;
+    font-size: 12px;
+  }
+  .actioncol {
+    text-align: center;
+  }
+  .btn-export {
+    background: #f79e1b;
+    color: white;
+    padding: 4px 15px;
+    vertical-align: 2px;
+    margin: 5px;
+  }
+  .exel-icon {
+    border: 1px solid green;
+    color: green;
+    line-height: 22px;
+    vertical-align: middle;
+    margin-right: 15px;
+    margin-bottom: 5px;
+  }
+  .btn-view {
+    background: black;
+    color: white;
+    margin-left: 5px;
+    margin-right: 5px;
+  }
+  .btn-approve {
+    background: green;
+    color: white;
+    margin-left: 5px;
+    margin-right: 5px;
+    box-shadow: none;
+  }
+  .btn-delete {
+    background: red;
+    color: white;
+    margin-left: 5px;
+    margin-right: 5px;
+    box-shadow: none;
+  }
+
+  @media (max-width: 767px) {
+    .transheader {
+      display: block;
+
+      .mat-form-field {
+        width: 100%;
+        max-width: none;
+      }
+    }
+  }
+
+  .dashtiles {
+    column-count: 4;
+    gap: 15px;
+    display: flex;
+    padding: 15px;
+    background: #eeeeee;
+    margin-bottom: 15px;
+    .mat-card {
+      width: 100%;
+      .mat-card-title-group {
+        margin-bottom: 5px;
+      }
+      .mat-card-subtitle {
+        font-size: 17px;
+      }
+      .mat-icon {
+        vertical-align: middle;
+      }
+      .mat-card-content {
+        display: flex;
+        gap: 5px;
+        align-items: center;
+        margin-top: 16px;
+        h4 {
+          margin-top: 2px;
+        }
+      }
+      .icon-display {
+        font-size: 60px;
+        height: 60px;
+        width: 60px;
+      }
+    }
+  }
+  .payments .mat-icon {
+    color: green;
+  }
+  .invoices .mat-icon {
+    color: #f79e1b;
+  }
+  .dashhead {
+    padding: 0px 15px 15px 15px;
+    h2 {
+      margin-bottom: 0px;
+    }
+  }
+}

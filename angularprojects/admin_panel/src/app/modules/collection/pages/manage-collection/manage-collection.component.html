@@ -1,0 +1,285 @@
+<app-layout>
+  <div id="manage-collection-page">
+    <div class="main-wrapper">
+      <div class="head">
+        <button mat-mini-fab class="back back-btn"  onclick="history.go(-1)">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+      <h2> Manage Collection</h2>
+      <h4> Collection Advisor : </h4>
+      <mat-form-field appearance="outline" class="dropdown" *ngIf="!editflag">
+        <mat-label>Collection Advisor</mat-label>
+        <mat-select [(value)]="selection" (selectionChange)="getClStaff($event.value)" [disabled]="editflag">
+          <mat-option  value="" selected>{{ advisor_name }}</mat-option>
+          <mat-option *ngFor="let advisor of collection_advisor_data" [value]="advisor">{{advisor.name}}</mat-option> 
+        </mat-select>
+      </mat-form-field>
+      <span *ngIf="editflag" style="padding: 6px;"> {{ advisor_name }} </span>
+      <button mat-flat-button (click)="openWaiverDialog()" *ngIf="waiver_flag" class="waiver-btn">Give Waiver</button>
+    </div>
+    <div class="mar">
+      <div class="details">
+        <h4>Company Name :  <span> {{ overdue_invoice_details && overdue_invoice_details.buyer_name ? overdue_invoice_details.buyer_name : '' }} </span> </h4>
+        <h4>Admin Name : <span>{{ overdue_invoice_details && overdue_invoice_details.buyer && overdue_invoice_details.buyer.admin_name ? overdue_invoice_details.buyer.admin_name : ''}}</span> </h4>
+        <h4>Admin Phone Number : <span>{{ overdue_invoice_details && overdue_invoice_details.buyer && overdue_invoice_details.buyer.admin_mobile ? overdue_invoice_details.buyer.admin_mobile : ''}}</span></h4>
+      </div>
+      <div class="details">
+        <h4>Invoice Number :  <span>{{overdue_invoice_details && overdue_invoice_details.invoice_number ? overdue_invoice_details.invoice_number : ''}}</span> </h4>
+        <h4>Invoice Date : <span>{{ ( overdue_invoice_details && overdue_invoice_details.invoice_date ? overdue_invoice_details.invoice_date : '') | date: Date_Format }}</span> </h4>
+        <h4>Invoice Due Date : <span>{{ ( overdue_invoice_details && overdue_invoice_details.invoice_due_date ? overdue_invoice_details.invoice_due_date : '') | date: Date_Format}}</span></h4>
+      </div>
+      <div class="details">
+        <h4>Invoice Amount :  <span>{{ (overdue_invoice_details && overdue_invoice_details.invoice && overdue_invoice_details.invoice.invoice_amount ? overdue_invoice_details.invoice.invoice_amount : 0) | currency: currency_format}}</span> </h4>
+        <h4>Outstanding Amount : <span>{{ (overdue_invoice_details && overdue_invoice_details.invoice && overdue_invoice_details.invoice.outstanding_amount ? overdue_invoice_details.invoice.outstanding_amount : 0) | currency: currency_format}}</span> </h4>
+      </div>
+      <div class="details">
+        <h4>Interest Applied :  <span>{{ (invoiceDetails && invoiceDetails.interest ? invoiceDetails.interest : 0) | currency: currency_format}}</span> </h4>
+        <h4>Total Outstanding Amount : <span>{{(invoiceDetails && invoiceDetails.total_outstanding_amount ? invoiceDetails.total_outstanding_amount : 0) | currency: currency_format}}</span> </h4>
+        <h4 *ngIf="editflag">Collection Status : <span>{{ this.collection_status }}</span></h4>
+        
+        <div class="details" *ngIf="!editflag">
+          <h4>Collection Status :</h4>
+          <mat-form-field appearance="outline" style="margin-top: 15px;"> 
+            <mat-label>Collection Status</mat-label>
+            <mat-select [(value)]="collection_status" [disabled]="collection_status == 'Collected'">
+              <mat-option value="Collection">Collection</mat-option>
+              <mat-option value="In-Progress">In-Progress</mat-option>
+              <mat-option value="Collected">Collected</mat-option>
+              <mat-option value="Escalated">Escalated</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+    </div>
+    <h2>Payment History</h2>
+    <table
+      mat-table
+      [dataSource]="dataSource"
+      matSort
+      (matSortChange)="announceSortChange($event)"
+      class="mat-elevation-z2"
+    >
+      <!-- Transaction Id Column -->
+      <ng-container matColumnDef="transactionID">
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+          sortActionDescription="Sort by transactionID"
+        >
+        Transaction Id
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{element && element.transactionID ? element.transactionID : ''}}
+        </td>
+      </ng-container>
+
+      <!--  Invoice Number Column -->
+      <ng-container matColumnDef="invoice_number">
+        <th
+          mat-header-cell
+          mat-sort-header
+          sortActionDescription="Sort by invoice_number"
+          *matHeaderCellDef
+        >
+        Invoice Number
+        </th>
+        <td mat-cell *matCellDef="let element">{{ element && element.invoice_number ? element.invoice_number : ''}}</td>
+      </ng-container>
+
+      <!-- Seller Name Column -->
+      <ng-container matColumnDef="seller_name">
+        <th
+          mat-header-cell
+          mat-sort-header
+          sortActionDescription="Sort by seller_name"
+          *matHeaderCellDef
+        >
+        Seller Name
+        </th>
+        <td mat-cell *matCellDef="let element">
+          <b>
+            {{ element && element.seller_name ? element.seller_name : ''}}
+          </b>
+        </td>
+      </ng-container>
+
+      <!-- Payment Date Column -->
+      <ng-container matColumnDef="createdAt">
+        <th
+          mat-header-cell
+          mat-sort-header
+          sortActionDescription="Sort by createdAt"
+          *matHeaderCellDef
+        >
+        Payment Date
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ (element && element.createdAt ? element.createdAt : '') | date: 'dd.MMM.yyyy hh:mm a'}}
+        </td>
+      </ng-container>
+
+      <!-- Paid Amount -->
+      <ng-container matColumnDef="amount">
+        <th
+          mat-header-cell
+          mat-sort-header
+          sortActionDescription="Sort by amount"
+          *matHeaderCellDef
+        >
+        Paid Amount
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ (element && element.amount ? element.amount : '') | currency : currency_format}}
+        </td>
+      </ng-container>
+
+      <!--  Payment Status Column -->
+      <ng-container matColumnDef="pstatus">
+        <th
+          mat-header-cell
+          mat-sort-header
+          sortActionDescription="Sort by pstatus"
+          *matHeaderCellDef
+        >
+        Payment Status
+        </th>
+        <td mat-cell *matCellDef="let element">
+          <b>
+            {{payment_status}}
+          </b>
+        </td>
+      </ng-container>
+
+    
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      <tr class="mat-row" *matNoDataRow>
+        <td class="text-center">
+          No Record Found
+        </td>
+      </tr>
+    </table>
+    <mat-paginator #paginator="matPaginator"
+      [pageSizeOptions]="[5, 10, 15]"
+      showFirstLastButtons
+      aria-label="Select page of periodic elements"
+    >
+    </mat-paginator>
+      
+    <div class="history">
+      <mat-accordion class="example-headers-align">
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Comments History
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+         
+          <!-- <p class="mar" *ngFor="let comment of comment_List">
+            {{ comment.comment}}
+          </p> -->
+
+    <table style="margin-top:10px; width: 100%;"
+      mat-table
+      [dataSource]="dataSource1"
+      matSort
+      (matSortChange)="announceSortChange($event)"
+      class="mat-elevation-z2"
+    >
+      <!--comment Column -->
+      <ng-container matColumnDef="comment">
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+          sortActionDescription="Sort by comment"
+        >
+        Comments
+        </th>
+        <td mat-cell *matCellDef="let element">
+           {{element.comment}}
+        </td>
+      </ng-container>
+
+      <!--  collection_status Column -->
+      <ng-container matColumnDef="collection_status">
+        <th
+          mat-header-cell
+          mat-sort-header
+          sortActionDescription="Sort by collection_status"
+          *matHeaderCellDef
+        >
+        Collection Status
+        </th>
+        <td mat-cell *matCellDef="let element">
+           {{element.collection_status}}
+        </td>
+      </ng-container>
+
+      <!-- commented_by Column -->
+      <ng-container matColumnDef="commented_by">
+        <th
+          mat-header-cell
+          mat-sort-header
+          sortActionDescription="Sort by commented_by"
+          *matHeaderCellDef
+        >
+        Commented By
+        </th>
+        <td mat-cell *matCellDef="let element">
+           {{element.commented_by}}
+        </td>
+      </ng-container>
+
+      <!-- Payment Date Column -->
+      <ng-container matColumnDef="createdAt">
+        <th
+          mat-header-cell
+          mat-sort-header
+          sortActionDescription="Sort by createdAt"
+          *matHeaderCellDef
+        >
+        Created At
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{(element.date_time) | date: 'dd.MMM.yyyy hh:mm a'}}
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns1"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns1"></tr>
+      <tr class="mat-row" *matNoDataRow>
+        <td class="text-center">
+          No Record Found
+        </td>
+      </tr>
+    </table>
+   <mat-paginator 
+   #paginator1="matPaginator"
+      [pageSizeOptions]="[5, 10, 15]"
+      showFirstLastButtons
+      aria-label="Select page of periodic elements"
+    >
+    </mat-paginator>
+
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+
+    <div class="comments"  *ngIf="!editflag">
+      <form [formGroup]="comment_form"
+      (ngSubmit)="updateOverDueInvoice()">
+        <mat-form-field appearance="outline">
+          <mat-label>Comments</mat-label>
+          <textarea matInput formControlName="comment"></textarea>
+        </mat-form-field>
+      <div class="text-center">
+          <button mat-flat-button type="submit">SAVE</button>
+       </div>
+    </form>
+    </div>
+  </div>
+</div>
+</app-layout>

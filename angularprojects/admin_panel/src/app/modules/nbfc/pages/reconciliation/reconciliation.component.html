@@ -1,0 +1,86 @@
+<app-layout>
+  <div id="reconciliation-page">
+    <div class="main-wrapper">
+      <div class="backdiv">
+        <!-- <h2>Mapped Company</h2> -->
+        <button
+          mat-mini-fab
+          color="primary"
+          onclick="history.go(-1); return false;"
+          class="back"
+          aria-label="back button"
+        >
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <h2> NBFC Reconciliation </h2>
+      </div>
+      
+      <h3 class="ml-15">
+        NBFC Name : <b>{{ nbfc_name }}</b>
+      </h3>
+      
+      <mat-card>
+        <mat-card-content>          
+          <div class="mb-30">
+            <h3>Invoices For NBFC</h3>
+            <mat-form-field appearance="outline" class="daterange">
+              <mat-label>Enter a date range</mat-label>
+              <mat-date-range-input
+                [rangePicker]="rangePicker"
+                [formGroup]="dateRange"
+                [max]="maxDate"
+              >
+                <input
+                  matStartDate
+                  placeholder="Start date"
+                  formControlName="start"
+                  required
+                  readonly
+                />
+                <input
+                  matEndDate
+                  placeholder="End date"
+                  formControlName="end"
+                  required
+                  readonly
+                />
+              </mat-date-range-input>
+              <mat-datepicker-toggle
+                matSuffix
+                [for]="rangePicker"
+              ></mat-datepicker-toggle>
+              <mat-date-range-picker #rangePicker>
+                <mat-date-range-picker-actions>
+                  <button mat-button matDateRangePickerCancel>Cancel</button>
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    matDateRangePickerApply
+                    (click)="dateRangeVal()"
+                  >
+                    Apply
+                  </button>
+                </mat-date-range-picker-actions>
+              </mat-date-range-picker>
+            </mat-form-field>
+            <button mat-flat-button class="btn-view" (click)="downloadFile()">
+              Download
+            </button>
+          </div>
+          <div class="mb-30">
+            <h3>NBFC Buyer Reconciliation</h3>
+
+            <!-- <label for="files" class="btn-upload">Upload Excel</label> -->
+            <input id="buyer_reconciliation" (change)="onFileChange($event)" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" placeholder="Upload File" multiple type="file" />
+          </div>
+
+          <!-- <div class="mb-30">
+            <h3>NBFC Seller Reconciliation</h3>
+            <label for="files" class="btn-upload">Upload Excel</label>
+            <input id="files" style="visibility: hidden" multiple type="file" />
+          </div> -->
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</app-layout>

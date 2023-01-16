@@ -1,0 +1,41 @@
+"use strict";
+let Lname;
+Lname = "santhosh";
+// Lname = 10;
+let newname = Lname.toUpperCase();
+console.log(newname);
+let age;
+age = 25;
+let dob = "26";
+let result = parseInt(dob);
+age = result;
+console.log(age);
+let isValid;
+isValid = true;
+console.log(isValid);
+let empList;
+empList = ["Edwin", "Karthik", "Shubam", "Avishek"];
+let numList;
+numList = [1, 2, 3, 4];
+let res = numList.filter((num) => num > 1);
+console.log(res);
+console.log(numList.find((num) => num === 2));
+let sum = numList.reduce((acc, num) => acc + num);
+console.log(sum);
+var Color;
+(function (Color) {
+    Color[Color["Red"] = 0] = "Red";
+    Color[Color["Green"] = 1] = "Green";
+    Color[Color["Blue"] = 2] = "Blue";
+})(Color || (Color = {}));
+let c = Color.Blue;
+let swapNumbs;
+function swapNumber(num1, num2) {
+    return [num2, num1];
+}
+swapNumbs = swapNumber(10, 20);
+swapNumbs[0];
+swapNumbs[1];
+let department;
+department = "IT";
+department = 10;

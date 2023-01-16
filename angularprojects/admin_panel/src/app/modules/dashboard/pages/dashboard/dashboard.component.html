@@ -1,0 +1,327 @@
+<app-layout>
+  <div id="dashpage-page">
+    <div class="main-wrapper">
+      <div class="dashhead">
+        <h2>INVOICES</h2>
+      </div>
+      <div class="dashtiles invoices">
+        <mat-card>
+          <mat-card-title-group>
+            <mat-card-subtitle> Invoice Uploaded</mat-card-subtitle>
+            <mat-card-title> {{ total_invoice_uploaded }} </mat-card-title>
+            <mat-icon class="icon-display">receipt</mat-icon>
+          </mat-card-title-group>
+          <mat-divider></mat-divider>
+          <mat-card-content>
+            <!-- <mat-icon>calendar_today</mat-icon> <h4>Last 24 Hours</h4> -->
+          </mat-card-content>
+        </mat-card>
+        <mat-card>
+          <mat-card-title-group>
+            <mat-card-subtitle> Invoice Pending</mat-card-subtitle>
+            <mat-card-title> {{ total_invoice_pending }} </mat-card-title>
+            <mat-icon class="icon-display">receipt</mat-icon>
+          </mat-card-title-group>
+          <mat-divider></mat-divider>
+          <mat-card-content>
+            <!-- <mat-icon>calendar_today</mat-icon> <h4>Last 24 Hours</h4> -->
+          </mat-card-content>
+        </mat-card>
+        <mat-card>
+          <mat-card-title-group>
+            <mat-card-subtitle>Invoices in Draft</mat-card-subtitle>
+            <mat-card-title> {{ total_invoice_draft }} </mat-card-title>
+            <mat-icon class="icon-display">receipt</mat-icon>
+          </mat-card-title-group>
+          <mat-divider></mat-divider>
+          <mat-card-content>
+            <!-- <mat-icon>calendar_today</mat-icon> <h4>Last 24 Hours</h4> -->
+          </mat-card-content>
+        </mat-card>
+        <mat-card style="display: none">
+          <mat-card-title-group>
+            <mat-card-subtitle>Simple card</mat-card-subtitle>
+            <mat-card-title> 25</mat-card-title>
+            <mat-icon class="icon-display">receipt</mat-icon>
+          </mat-card-title-group>
+          <mat-divider></mat-divider>
+          <mat-card-content>
+            <!-- <mat-icon>calendar_today</mat-icon> <h4>Last 24 Hours</h4> -->
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <div class="dashhead">
+        <h2>PAYMENTS</h2>
+      </div>
+      <div class="dashtiles payments">
+        <mat-card>
+          <mat-card-title-group>
+            <mat-card-subtitle> Invoice Value</mat-card-subtitle>
+            <mat-card-title>
+              {{ total_invoice_value | currency: currency_format }}
+            </mat-card-title>
+            <mat-icon class="icon-display">payment</mat-icon>
+          </mat-card-title-group>
+          <mat-divider></mat-divider>
+          <mat-card-content>
+            <!-- <mat-icon>calendar_today</mat-icon> <h4>Last 24 Hours</h4> -->
+          </mat-card-content>
+        </mat-card>
+        <mat-card>
+          <mat-card-title-group>
+            <mat-card-subtitle> Payment Received </mat-card-subtitle>
+            <mat-card-title>
+              {{ total_invoice_received | currency: currency_format }}
+            </mat-card-title>
+            <mat-icon class="icon-display">payment</mat-icon>
+          </mat-card-title-group>
+          <mat-divider></mat-divider>
+          <mat-card-content>
+            <!-- <mat-icon>calendar_today</mat-icon> <h4>Last 24 Hours</h4> -->
+          </mat-card-content>
+        </mat-card>
+        <mat-card>
+          <mat-card-title-group>
+            <mat-card-subtitle> Payments Due</mat-card-subtitle>
+            <mat-card-title>
+              {{ total_invoice_due | currency: currency_format }}
+            </mat-card-title>
+            <mat-icon class="icon-display">payment</mat-icon>
+          </mat-card-title-group>
+          <mat-divider></mat-divider>
+          <mat-card-content>
+            <!-- <mat-icon>calendar_today</mat-icon> <h4>Last 24 Hours</h4> -->
+          </mat-card-content>
+        </mat-card>
+        <mat-card style="display: none">
+          <mat-card-title-group>
+            <mat-card-subtitle> Payments Due</mat-card-subtitle>
+            <mat-card-title> 25</mat-card-title>
+            <mat-icon class="icon-display">payment</mat-icon>
+          </mat-card-title-group>
+          <mat-divider></mat-divider>
+          <mat-card-content>
+            <!-- <mat-icon>calendar_today</mat-icon> <h4>Last 24 Hours</h4> -->
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <div class="dashhead">
+        <h2>COMPANIES AND NBFC</h2>
+      </div>
+      <div class="dashtiles">
+        <mat-card>
+          <mat-card-title-group>
+            <mat-card-subtitle>Comapnies Onboarded</mat-card-subtitle>
+            <mat-card-title> {{ total_companies_onboarded }} </mat-card-title>
+            <mat-icon class="icon-display">location_city</mat-icon>
+          </mat-card-title-group>
+          <mat-divider></mat-divider>
+          <mat-card-content>
+            <!-- <mat-icon>calendar_today</mat-icon> <h4>Last 30 Days</h4> -->
+          </mat-card-content>
+        </mat-card>
+        <mat-card>
+          <mat-card-title-group>
+            <mat-card-subtitle>NBFCs Onboarded</mat-card-subtitle>
+            <mat-card-title> {{ total_nbfc_onboarded }} </mat-card-title>
+            <mat-icon class="icon-display">location_city</mat-icon>
+          </mat-card-title-group>
+          <mat-divider></mat-divider>
+          <mat-card-content>
+            <!-- <mat-icon>calendar_today</mat-icon> <h4>Last 30 Days</h4> -->
+          </mat-card-content>
+        </mat-card>
+        <mat-card>
+          <mat-card-title-group>
+            <mat-card-subtitle>Companies on Hold</mat-card-subtitle>
+            <mat-card-title> {{ total_companies_hold }} </mat-card-title>
+            <mat-icon class="icon-display">location_city</mat-icon>
+          </mat-card-title-group>
+          <mat-divider></mat-divider>
+          <mat-card-content>
+            <!-- <mat-icon>calendar_today</mat-icon> <h4>Last 30 Days</h4> -->
+          </mat-card-content>
+        </mat-card>
+        <mat-card style="display: none">
+          <mat-card-title-group>
+            <mat-card-subtitle>Companies Pending</mat-card-subtitle>
+            <mat-card-title> 25</mat-card-title>
+            <mat-icon class="icon-display">location_city</mat-icon>
+          </mat-card-title-group>
+          <mat-divider></mat-divider>
+          <mat-card-content>
+            <!-- <mat-icon>calendar_today</mat-icon> <h4>Last 30 Days</h4> -->
+          </mat-card-content>
+        </mat-card>
+      </div>
+      <table
+        style="display: none"
+        mat-table
+        matTableExporter
+        [hiddenColumns]="[5]"
+        #exporter="matTableExporter"
+        [dataSource]="dataSource"
+        matSort
+        (matSortChange)="announceSortChange($event)"
+        class="mat-elevation-z2"
+      >
+        <!-- Company Name Column -->
+        <ng-container matColumnDef="comapny">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            mat-sort-header
+            sortActionDescription="Sort by comapny"
+          >
+            Company Name
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element && element.comapny ? element.comapny : "" }}
+          </td>
+        </ng-container>
+
+        <!-- Credit Limit -->
+        <ng-container matColumnDef="creditLimit">
+          <th
+            mat-header-cell
+            mat-sort-header
+            sortActionDescription="Sort by creditLimit"
+            *matHeaderCellDef
+          >
+            Credit Limit
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{
+              numberformat(
+                element && element.creditLimit ? element.creditLimit : 0
+              )
+            }}
+          </td>
+        </ng-container>
+
+        <!-- Credit Utilize Column -->
+        <ng-container matColumnDef="creditutilize">
+          <th
+            mat-header-cell
+            mat-sort-header
+            sortActionDescription="Sort by creditutilize"
+            *matHeaderCellDef
+          >
+            Credit Limit Utilize
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{
+              numberformat(
+                element && element.creditutilize ? element.creditutilize : 0
+              )
+            }}
+          </td>
+        </ng-container>
+
+        <!-- Available Credit Column -->
+        <ng-container matColumnDef="available_credit_limit">
+          <th
+            mat-header-cell
+            mat-sort-header
+            sortActionDescription="Sort by available_credit_limit"
+            *matHeaderCellDef
+          >
+            Available Credit Limit
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{
+              numberformat(
+                element && element.available_credit_limit
+                  ? element.available_credit_limit
+                  : 0
+              )
+            }}
+          </td>
+        </ng-container>
+
+        <!-- Processed Invoice Column -->
+        <ng-container matColumnDef="invoice_processed">
+          <th
+            mat-header-cell
+            mat-sort-header
+            sortActionDescription="Sort by invoice_processed"
+            *matHeaderCellDef
+          >
+            Processed Invoice
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{
+              element && element.invoice_processed
+                ? element.invoice_processed
+                : 0
+            }}
+          </td>
+        </ng-container>
+
+        <!-- Pending Invoice Column -->
+        <ng-container matColumnDef="count_pending">
+          <th
+            mat-header-cell
+            mat-sort-header
+            sortActionDescription="Sort by count_pending"
+            *matHeaderCellDef
+          >
+            Pending Invoice
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element && element.count_pending ? element.count_pending : 0 }}
+          </td>
+        </ng-container>
+
+        <!-- Pending Payment Column-->
+        <ng-container matColumnDef="count_confirmed_partpay">
+          <th
+            mat-header-cell
+            mat-sort-header
+            sortActionDescription="Sort by count_confirmed_partpay"
+            *matHeaderCellDef
+          >
+            Pending Payment
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{
+              element && element.count_confirmed_partpay
+                ? element.count_confirmed_partpay
+                : 0
+            }}
+          </td>
+        </ng-container>
+
+        <!-- invoice Overdue -->
+        <ng-container matColumnDef="countOverdue">
+          <th
+            mat-header-cell
+            mat-sort-header
+            sortActionDescription="Sort by countOverdue"
+            *matHeaderCellDef
+          >
+            Invoice Overdue
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element && element.countOverdue ? element.countOverdue : 0 }}
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        <tr class="mat-row" *matNoDataRow>
+          <td class="text-center">No Entity Found</td>
+        </tr>
+      </table>
+      <mat-paginator
+        style="display: none"
+        [pageSizeOptions]="[10, 20, 50]"
+        showFirstLastButtons
+        aria-label="Select page of periodic elements"
+      >
+      </mat-paginator>
+    </div>
+  </div>
+</app-layout>
